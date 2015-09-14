@@ -1,0 +1,180 @@
+/* Common CSS for jQuery demonstration pages. */
+body {
+	margin: 20px 40px 20px 120px;
+	background: url(marblegbor.gif) repeat-y;
+	font-family: Arial, Helvetica, Sans-serif;
+}
+hr {
+	color: #3c8243;
+}
+h1 {
+	border-bottom: 2px solid #484;
+	font-size: 150%;
+}
+h2 {
+	border-bottom: 1px solid #484;
+	font-size: 120%;
+}
+h3 {
+	border-bottom: 1px solid #484;
+	font-size: 100%;
+}
+h3 a {
+	text-decoration: none;
+}
+pre {
+	clear: both;
+	margin: 10px 0px;
+}
+code {
+	font-size: 120%;
+}
+@media all and (-webkit-min-device-pixel-ratio:10000), not all and (-webkit-min-device-pixel-ratio:0) { /* Opera only */
+	code {
+		font-size: 100%;
+	}
+} 
+pre code {
+	font-size: 100%;
+}
+html:first-child pre { /* Opera */
+	font-size: 80%;
+}
+q {
+	font-style: italic;
+}
+blockquote {
+	clear: both;
+	margin: 0px;
+}
+blockquote:before {
+	content: url(../img/quote-o.png);
+}
+blockquote:after {
+	content: url(../img/quote-c.png);
+}
+blockquote p {
+	display: inline;
+	margin: 0px;
+}
+cite {
+	float: right;
+	margin-bottom: 0.5em;
+}
+li {
+	margin-bottom: 10px;
+}
+input, select, textarea {
+	font-family: Arial, Helvetica, Sans-serif;
+	font-size: 100%;
+}
+table {
+	border-collapse: collapse;
+}
+th {
+	text-align: left;
+}
+th, td {
+	padding: 0.5em;
+	vertical-align: top;
+}
+table ul {
+	margin: 0px;
+	padding-left: 1em;
+}
+.ui-widget-content {
+	font-size: 100%; 
+}
+.clear {
+	clear: both;
+}
+.tabSplit {
+	clear: both;
+}
+.feature {
+	clear: both;
+	border: 1px solid #3c8243;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+.demoLabel {
+	float: left; 
+	width: 14.5em;
+	margin-right: 0.5em;
+}
+div.showCode {
+	width: 5em;
+	margin-left: 18.5em;
+	padding: 0.5em 0.5em 0em;
+	border: 1px solid #3c8243;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+a.showCode {
+	position: relative;
+	top: -0.25em;
+	left: -0.25em;
+	color: #000;
+	font-family: Arial, Helvetica, Sans-serif;
+	font-size: 100%;
+	text-decoration: none;
+	cursor: pointer;
+}
+.quickref {
+	padding: 3px;
+	font-size: 90%;
+}
+.version {
+	font-weight: bold;
+}
+#header-links {
+	float: right;
+}
+#header-links img {
+	border: none;
+}
+#download img {
+	vertical-align: top;
+}
+#wildLinks {
+	clear: both;
+}
+#wildLinks div {
+	float: left;
+	width: 48%;
+	padding: 0% 1%;
+}
+#wildLinks a img {
+	border: none;
+	vertical-align: middle;
+}
+#valid {
+	float: right;
+}
+#valid img {
+	border: none;
+}
+/* Print overrides */
+@media print {
+	body {
+		background: none;
+		margin: 0px;
+	}
+	code {
+		font-size: 100% !important;
+	}
+	#header-links {
+		display: none;
+	}
+	#bookmark {
+		display: none;
+	}
+	#tabs > ul {
+		display: none;
+	}
+	.quickref {
+		display: none;
+	}
+}
