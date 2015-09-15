@@ -15,7 +15,7 @@ $(function() {
 
 function loadLineChartData() {
 
-    var url = "http://ec2-52-24-129-230.us-west-2.compute.amazonaws.com/datacollector/getData";
+    var url = "http://.amazonaws.com/datacollector/getData";
 
     $.ajax({
         type: "GET",
