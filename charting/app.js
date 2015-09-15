@@ -1,4 +1,3 @@
-
 // Vars
 var oneSecondMS = 1000;
 var oneMinuteMS = 60 * oneSecondMS;
@@ -13,6 +12,9 @@ $(function() {
 
 });
 
+/**
+ * Load the chart data from the data service
+ */
 function loadLineChartData() {
 
     var url = "http://.amazonaws.com/datacollector/getData";
@@ -23,7 +25,7 @@ function loadLineChartData() {
         dataType: "json",   // Straight up JSON so we get an object as the data object in the success function
         success: function (data) {
 
-            // Populate two arrays, one for lables and one for values
+            // Populate two arrays, one for labels and one for values
             var labels = [];
             var values = [];
             $.each(data, function (key, val) {
@@ -50,7 +52,7 @@ function buildChartUI(labels, values) {
         labels: labels,
         datasets: [
             {
-                label: "My First dataset",
+                label: "Attic temp dataset",
                 fillColor: "rgba(220,220,220,0.2)",
                 strokeColor: "rgba(220,220,220,1)",
                 pointColor: "rgba(220,220,220,1)",
@@ -66,14 +68,14 @@ function buildChartUI(labels, values) {
         bezierCurve: true
     };
 
-
     // Get context with jQuery - using jQuery's .get() method.
     var ctx = $("#myChart").get(0).getContext("2d");
 
-    // This will get the first returned node in the jQuery collection.
+    // Create a line chart within the context
     var lineChart = new Chart(ctx).Line(data, options);
 }
 
+// Helper to delay/recall the load chart data function
 function setDelayTime() {
     setTimeout("loadLineChartData();", $refreshIntervalMS);
 }
