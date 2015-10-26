@@ -4,9 +4,9 @@
     height: 50px;
     text-align: center;
     vertical-align: middle;
-    background: #81a2ff;
+    background: #525252;
     font-size: 34px;
-    color: #5cff26;
+    color: #0dcc12;
 }
 
 #time {
@@ -25,7 +25,7 @@
 }
 
 #dataTable {
-     background: #81a2ff;
+    background: rgba(130, 130, 130, 0.66);
 }
 
 #status {
@@ -42,9 +42,9 @@
     height: 50px;
     text-align: center;
     vertical-align: middle;
-    background: #81a2ff;
+    background: #525252;
     font-size: 34px;
-    color: #5cff26;
+    color: #0dcc12;
 }
 
 #time2 {
@@ -63,7 +63,7 @@
 }
 
 #dataTable2 {
-    background: #81a2ff;
+    background: rgba(130, 130, 130, 0.66);
 }
 
 #status2 {

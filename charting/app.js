@@ -17,7 +17,8 @@ $(function() {
  */
 function loadLineChartData() {
 
-    var url = "http://.amazonaws.com/datacollector/getData";
+    var url = "http://ec2-52-24-129-230.us-west-2.compute.amazonaws.com/datacollector/getData?feedName=test";
+    // var url = "http://localhost:8080/datacollector/getData?feedName=test";
 
     $.ajax({
         type: "GET",
@@ -65,7 +66,7 @@ function buildChartUI(labels, values) {
     };
 
     var options = {
-        bezierCurve: true
+        bezierCurve: false
     };
 
     // Get context with jQuery - using jQuery's .get() method.

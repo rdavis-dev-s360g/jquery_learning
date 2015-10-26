@@ -5,6 +5,12 @@
     <script src="../js/jquery.js"></script>
     <script src="app.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" href="jqx.base.css" type="text/css" />
+    <script type="text/javascript" src="jqxcore.js"></script>
+    <script type="text/javascript" src="jqxdata.js"></script>
+    <script type="text/javascript" src="jqxdraw.js"></script>
+    <script type="text/javascript" src="jqxgauge.js"></script>
+    <script type="text/javascript" src="jqxbuttons.js"></script>
 </head>
 <body>
 
@@ -13,9 +19,13 @@
     <tr><td id="time" align="center"/><td id="percentChange" align="center"/></tr>
     <tr><td id="status" colspan="2" align="center"/></tr>
     <tr><td class="leftLabel" align="center"/>Buy in<td class="rightValue" align="center"/><input id="buyin"/></td></tr>
-    <tr><td class="leftLabel" align="center"/># shares<td class="rightValue" align="center"/><input id="shares"/></td></tr>
+    <tr><td class="leftLabel" align="center"></td># shares<td class="rightValue" align="center"/><input id="shares"/></td></tr>
     <tr><td class="leftLabel" align="center"/>profit<td class="rightValue" id="profit" align="center"/></td></tr>
+    <tr><td colspan="2"><div id="gauge1"></div></td> </tr>
 </table>
+
+
+
 <br>
 <table id="dataTable2">
     <tr><td colspan="2" id="quote2"/></tr>
@@ -24,6 +34,7 @@
     <tr><td class="leftLabel" align="center"/>Buy in<td class="rightValue" align="center"/><input id="buyin2"/></td></tr>
     <tr><td class="leftLabel" align="center"/># shares<td class="rightValue" align="center"/><input id="shares2"/></td></tr>
     <tr><td class="leftLabel" align="center"/>profit<td class="rightValue" id="profit2" align="center"/></td></tr>
+    <tr><td colspan="2"><div id="gauge2"></div></td> </tr>
 </table>
 </body>
 </html>
