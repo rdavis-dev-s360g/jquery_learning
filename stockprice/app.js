@@ -3,7 +3,7 @@
 var oneSecondMS = 1000;
 var oneMinuteMS = 60 * oneSecondMS;
 var oneHourMS = 60 * oneMinuteMS;
-var $refreshIntervalMS = 1 * oneMinuteMS;
+var $refreshIntervalMS = 5 * oneMinuteMS;
 
 $(function() {
     var box = $("#box");
@@ -128,16 +128,16 @@ function setupGauge($gauge) {
     $gauge = $gauge || $('#gauge');
     $gauge.jqxGauge({
         ranges: [{
-            startValue: -30,
-            endValue: -15,
-            style: {fill: 'red', stroke: 'orange'},
-            startDistance: 0,
-            endDistance: 0
-        },
+                startValue: -30,
+                endValue: -15,
+                style: {fill: 'red', stroke: 'orange'},
+                startDistance: 0,
+                endDistance: 0
+            },
             {
                 startValue: -15,
                 endValue: -10,
-                style: {fill: 'orangered', stroke: 'red'},
+                style: {fill: 'orange', stroke: 'red'},
                 startDistance: 0,
                 endDistance: 0
             },
@@ -172,7 +172,7 @@ function setupGauge($gauge) {
             {
                 startValue: 10,
                 endValue: 15,
-                style: {fill: 'orangered', stroke: 'red'},
+                style: {fill: 'orange', stroke: 'red'},
                 startDistance: 0,
                 endDistance: 0
             },
