@@ -90,3 +90,12 @@ TD.rightValue {
     font-weight: normal;
 }
 
+TD.chartCell {
+    font-family: Arial;
+    background: #ffffff;
+    font-size: 12px;
+    color: #000000;
+    font-weight: normal;
+
+}
+

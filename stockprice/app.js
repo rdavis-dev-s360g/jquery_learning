@@ -20,6 +20,14 @@ $(function() {
         displayStockData();
     });
 
+    $("#gauge1").click(function() {
+        displayStockData();
+    });
+
+    $("#gauge2").click(function() {
+        displayStockData();
+    });
+
     // Configure gauges
     setupGauge($("#gauge1"));
     setupGauge($("#gauge2"));
@@ -28,7 +36,7 @@ $(function() {
 function displayStockData() {
 
     // Get stock prices for symbols separated by commas
-    var url = "http://www.google.com/finance/info?q=NSE:nugt,dust";
+    var url = "http://www.google.com/finance/info?q=NSE:nugt,uwti";
 
     $.ajax({
         type: "GET",
@@ -51,12 +59,12 @@ function displayStockData() {
             $("#quote").text(ticker + " " + lastPrice);
             $("#time").text(new Date().toLocaleTimeString());
             $("#percentChange").text(changePercent + "%");
-            $("#gauge1").jqxGauge('value', Math.abs(changePercent));
+            $("#gauge1").jqxGauge('value', changePercent);
 
             var LIMIT = 10;
             var cpn = Number(changePercent);
             // If % up or down is greater than LIMIT
-            if (cpn < -LIMIT || cpn > LIMIT) {
+            if (Math.abs(cpn) > LIMIT) {
                 $("#status").text("PAY ATTENTION");
                 $("#status").css("color", "red");
             } else {
@@ -79,11 +87,11 @@ function displayStockData() {
             $("#quote2").text(ticker + " " + lastPrice);
             $("#time2").text(new Date().toLocaleTimeString());
             $("#percentChange2").text(changePercent + "%");
-            $("#gauge2").jqxGauge('value', Math.abs(changePercent));
+            $("#gauge2").jqxGauge('value', changePercent);
 
             var LIMIT = 10;
             var cpn = Number(changePercent);
-            if (cpn < -LIMIT || cpn > LIMIT) {
+            if (Math.abs(cpn) > LIMIT) {
                 $("#status2").text("PAY ATTENTION");
                 $("#status2").css("color", "red");
             } else {
@@ -113,48 +121,80 @@ function displayStockData() {
  * Setup gauge in UI for use
  *
  * @param $gauge the gauge to set up
+ *
+ * http://www.jqwidgets.com/jquery-widgets-demo/
  */
 function setupGauge($gauge) {
     $gauge = $gauge || $('#gauge');
     $gauge.jqxGauge({
         ranges: [{
-            startValue: 0,
-            endValue: 5,
-            style: {fill: '#4cb848', stroke: '#4cb848'},
+            startValue: -30,
+            endValue: -15,
+            style: {fill: 'red', stroke: 'orange'},
             startDistance: 0,
             endDistance: 0
         },
             {
+                startValue: -15,
+                endValue: -10,
+                style: {fill: 'orangered', stroke: 'red'},
+                startDistance: 0,
+                endDistance: 0
+            },
+            {
+                startValue: -10,
+                endValue: -5,
+                style: {fill: 'yellow', stroke: 'yellow'},
+                startDistance: 0,
+                endDistance: 0
+            },
+            {
+                startValue: -5,
+                endValue: 0,
+                style: {fill: 'green', stroke: 'green'},
+                startDistance: 0,
+                endDistance: 0
+            },
+            {
+                startValue: 0,
+                endValue: 5,
+                style: {fill: 'green', stroke: 'green'},
+                startDistance: 0,
+                endDistance: 0
+            },
+            {
                 startValue: 5,
                 endValue: 10,
-                style: {fill: '#fad00b', stroke: '#fad00b'},
+                style: {fill: 'yellow', stroke: 'yellow'},
                 startDistance: 0,
                 endDistance: 0
             },
             {
                 startValue: 10,
                 endValue: 15,
-                style: {fill: '#ff6600', stroke: '#ff6600'},
+                style: {fill: 'orangered', stroke: 'red'},
                 startDistance: 0,
                 endDistance: 0
             },
             {
                 startValue: 15,
-                endValue: 20,
-                style: {fill: '#e53d37', stroke: '#e53d37'},
+                endValue: 30,
+                style: {fill: 'red', stroke: 'orange'},
                 startDistance: 0,
                 endDistance: 0
-            }],
+            }
+
+        ],
         cap: {size: '5%', style: {fill: '#2e79bb', stroke: '#2e79bb'}},
         border: {style: {fill: '#8e9495', stroke: '#7b8384', 'stroke-width': 1}},
         ticksMinor: {interval: 5, size: '5%'},
         ticksMajor: {interval: 20, size: '10%'},
-        labels: {position: 'outside', interval: 1},
+        labels: {position: 'outside', interval: 5},
         pointer: {style: {fill: '#2e79bb'}, width: 5},
         width: '200px',
         height: '200px',
-        min: 0,
-        max: 20,
+        min: -30,
+        max: 30,
         animationDuration: 1500
     });
     $gauge.jqxGauge('value', 0);
