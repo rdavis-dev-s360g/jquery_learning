@@ -3,7 +3,7 @@
 var oneSecondMS = 1000;
 var oneMinuteMS = 60 * oneSecondMS;
 var oneHourMS = 60 * oneMinuteMS;
-var $refreshIntervalMS = 5 * oneMinuteMS;
+var $refreshIntervalMS = 1 * oneMinuteMS;
 
 $(function() {
     var box = $("#box");
@@ -89,7 +89,6 @@ function displayStockData() {
             $("#percentChange2").text(changePercent + "%");
             $("#gauge2").jqxGauge('value', changePercent);
 
-            var LIMIT = 10;
             var cpn = Number(changePercent);
             if (Math.abs(cpn) > LIMIT) {
                 $("#status2").text("PAY ATTENTION");
@@ -144,7 +143,7 @@ function setupGauge($gauge) {
             {
                 startValue: -10,
                 endValue: -5,
-                style: {fill: 'yellow', stroke: 'yellow'},
+                style: {fill: 'yellow', stroke: 'green'},
                 startDistance: 0,
                 endDistance: 0
             },
@@ -165,7 +164,7 @@ function setupGauge($gauge) {
             {
                 startValue: 5,
                 endValue: 10,
-                style: {fill: 'yellow', stroke: 'yellow'},
+                style: {fill: 'yellow', stroke: 'green'},
                 startDistance: 0,
                 endDistance: 0
             },
@@ -185,12 +184,12 @@ function setupGauge($gauge) {
             }
 
         ],
-        cap: {size: '5%', style: {fill: '#2e79bb', stroke: '#2e79bb'}},
+        cap: {size: '5%', style: {fill: 'blue', stroke: 'orange'}},
         border: {style: {fill: '#8e9495', stroke: '#7b8384', 'stroke-width': 1}},
-        ticksMinor: {interval: 5, size: '5%'},
+        ticksMinor: {interval: 1, size: '5%'},
         ticksMajor: {interval: 20, size: '10%'},
         labels: {position: 'outside', interval: 5},
-        pointer: {style: {fill: '#2e79bb'}, width: 5},
+        pointer: {style: {fill: 'darkgray'}, width: 5},
         width: '200px',
         height: '200px',
         min: -30,

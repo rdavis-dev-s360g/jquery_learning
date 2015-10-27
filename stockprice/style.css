@@ -1,3 +1,7 @@
+body {
+    background-color: darkgray;
+}
+
 #quote {
     font-family: Arial;
     width: 200px;
