@@ -4,10 +4,25 @@ var oneSecondMS = 1000;
 var oneMinuteMS = 60 * oneSecondMS;
 var oneHourMS = 60 * oneMinuteMS;
 var $refreshIntervalMS = 1 * oneMinuteMS;
+var PRICE_ALERT_PERCENT_LIMIT = 10;
+var PRICE_ALERT_PERCENT_MESSAGING_LIMIT = 13;
+
+// Store state of notifications so we control when they go out
+var notificationCache = {};
+var notificationCacheExpiration = {};
+var NOTIFICATION_INTERVAL_MINS = 60;
+var NOTIFICATION_INTERVAL_MS = NOTIFICATION_INTERVAL_MINS * 60 * 1000;
+
+var symbol1 = "nugt";
+var symbol2 = "uwti";
 
 $(function() {
     var box = $("#box");
     var para = $("p");
+
+    // Pre-seed notification cache
+    notificationCache[symbol1] = false;
+    notificationCache[symbol2] = false;
 
     // Make initial call
     displayStockData();
@@ -33,10 +48,17 @@ $(function() {
     setupGauge($("#gauge2"));
 });
 
+/**
+ * Update UI with stock data
+ */
 function displayStockData() {
 
+    // Expire notification cache if needed
+    updateNotificationExpirationStatus(symbol1);
+    updateNotificationExpirationStatus(symbol2);
+
     // Get stock prices for symbols separated by commas
-    var url = "http://www.google.com/finance/info?q=NSE:nugt,uwti";
+    var url = "http://www.google.com/finance/info?q=NSE:" + symbol1 + "," + symbol2;
 
     $.ajax({
         type: "GET",
@@ -61,15 +83,19 @@ function displayStockData() {
             $("#percentChange").text(changePercent + "%");
             $("#gauge1").jqxGauge('value', changePercent);
 
-            var LIMIT = 10;
             var cpn = Number(changePercent);
-            // If % up or down is greater than LIMIT
-            if (Math.abs(cpn) > LIMIT) {
+            // If % up or down is greater than PRICE_ALERT_PERCENT_LIMIT
+            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
                 $("#status").text("PAY ATTENTION");
                 $("#status").css("color", "red");
             } else {
                 $("#status").text("normal");
                 $("#status").css("color", "green");
+            }
+
+            // Send alert message?
+            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
+                sendAlertMessage(symbol1, "Price alert for " + symbol1, "Price alert for " + symbol1 + " percent change is " + changePercent + "%");
             }
 
             // Calculate profit
@@ -89,8 +115,8 @@ function displayStockData() {
             $("#percentChange2").text(changePercent + "%");
             $("#gauge2").jqxGauge('value', changePercent);
 
-            var cpn = Number(changePercent);
-            if (Math.abs(cpn) > LIMIT) {
+            cpn = Number(changePercent);
+            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
                 $("#status2").text("PAY ATTENTION");
                 $("#status2").css("color", "red");
             } else {
@@ -98,10 +124,15 @@ function displayStockData() {
                 $("#status2").css("color", "green");
             }
 
+            // Send alert message?
+            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
+                sendAlertMessage(symbol2, "Price alert for " + symbol2, "Price alert for " + symbol2 + " percent change is " + changePercent + "%");
+            }
+
             // Calculate profit
-            var buyin = $("#buyin2").val();
-            var shares = $("#shares2").val();
-            var profit = (lastPrice * shares) - (buyin * shares);
+            buyin = $("#buyin2").val();
+            shares = $("#shares2").val();
+            profit = (lastPrice * shares) - (buyin * shares);
             $("#profit2").text("$" + profit);
 
             document.title = "Updated data " + new Date().toLocaleTimeString();
@@ -199,8 +230,111 @@ function setupGauge($gauge) {
     $gauge.jqxGauge('value', 0);
 }
 
+/**
+ * Send an alert message, but don't send them too often
+ *
+ * @param symbol the stock symbol
+ * @param subject the subject
+ * @param message the message
+ */
+function sendAlertMessage(symbol, subject, message) {
+
+    // Check the cache. If the value is true, that means we've sent a notification already
+    if (notificationCache[symbol] == true) {
+        return false;
+    }
+
+    sendMessage(subject, message);
+
+    console.log('Alert message sent for: ' + symbol);
+    console.log("Updating notification cache entry for " + symbol);
+    notificationCache[symbol] = true;                     // Set notified to true
+    notificationCacheExpiration[symbol] = Date.now();     // Save time notified
+
+}
+
+/**
+ * Load the chart data from the data service
+ *
+ * @param subject the subject
+ * @param message the message
+ */
+function sendMessage(subject, message) {
+
+    var url = "http://ec2-52-24-129-230.us-west-2.compute.amazonaws.com/datacollector/sendMessage?subject=" + subject + "&message=" + message;
+    // var url = "http://localhost:8080/datacollector/getData?feedName=test";
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",   // Straight up JSON so we get an object as the data object in the success function
+        success: function (data) {
+            // Do something here
+        },
+        error: function (xhr) {
+            //alert("error");
+            // alert(xhr.responseText);
+        }
+    });
+}
+
 function setDelayTime() {
     setTimeout("displayStockData();", $refreshIntervalMS);
 }
 
 
+/**
+ * Check the notification status and expire
+ *
+ * @param symbol
+ */
+function updateNotificationExpirationStatus(symbol) {
+
+    // Expire notification cache if needed so we know to notify again
+    if (isNotificationCacheEntryExpiryTime(symbol)) {
+        console.log("Clearing notification cache for " + symbol);
+        notificationCache[symbol] = false;
+    }
+}
+
+/**
+ * Determine if its time to expire the cache for the ticker passed
+ *
+ * @param symbol the ticker symbol
+ * @returns true/false
+ */
+function isNotificationCacheEntryExpiryTime(symbol) {
+
+    // Short-circuit if the symbol hasn't been added to the JS Map (Object)
+    if (!notificationCacheExpiration[symbol]) {
+        return false;
+    }
+
+    // Return whether now is past the last notification timestamp in ms + the wait interval
+    var now = Date.now();
+    var pastPlusInterval = (notificationCacheExpiration[symbol] + NOTIFICATION_INTERVAL_MS);
+    var gap = now - pastPlusInterval;
+    var expireCache = gap >= 0;
+    return expireCache;
+}
+
+/**
+ * After hours?
+ * @returns {boolean}
+ */
+function afterHours() {
+
+    // Don't send alerts after hours or over weekends
+    // Don't send if < 14:30 UTC or >= 20 or Sat/Sun (if less than 830 and if hour is > 2pm
+    var currentHour = new Date().getUTCHours();
+    var currentMinute = new Date().getUTCMinutes();
+    var currentDay = new Date().getUTCDay();
+
+    // Using UTC hour comparison here
+    if (currentDay > 5 || (currentHour < 14 && currentMinute < 30) || currentHour >= 20) {
+        console.log("It IS AFTER HOURS --- time is " + new Date());
+        return true;
+    }
+    console.log("It IS NOT AFTER HOURS --- time is " + new Date());
+    return false;
+}
