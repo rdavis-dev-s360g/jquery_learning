@@ -5,12 +5,12 @@ var oneMinuteMS = 60 * oneSecondMS;
 var oneHourMS = 60 * oneMinuteMS;
 var $refreshIntervalMS = 1 * oneMinuteMS;
 var PRICE_ALERT_PERCENT_LIMIT = 10;
-var PRICE_ALERT_PERCENT_MESSAGING_LIMIT = 13;
+var PRICE_ALERT_PERCENT_MESSAGING_LIMIT = 5;
 
 // Store state of notifications so we control when they go out
 var notificationCache = {};
 var notificationCacheExpiration = {};
-var NOTIFICATION_INTERVAL_MINS = 60;
+var NOTIFICATION_INTERVAL_MINS = 15;
 var NOTIFICATION_INTERVAL_MS = NOTIFICATION_INTERVAL_MINS * 60 * 1000;
 
 var symbol1 = "nugt";
@@ -46,12 +46,20 @@ $(function() {
     // Configure gauges
     setupGauge($("#gauge1"));
     setupGauge($("#gauge2"));
+    setupLinearGauge($("#lgauge1"), 20, 60, 35);
+    setupLinearGauge($("#lgauge2"), 0, 40, 13.5 );
 });
 
 /**
  * Update UI with stock data
  */
 function displayStockData() {
+
+    // Don't query price after hours
+    if (afterHours()) {
+        setDelayTime();
+        return;
+    }
 
     // Expire notification cache if needed
     updateNotificationExpirationStatus(symbol1);
@@ -82,6 +90,7 @@ function displayStockData() {
             $("#time").text(new Date().toLocaleTimeString());
             $("#percentChange").text(changePercent + "%");
             $("#gauge1").jqxGauge('value', changePercent);
+            $("#lgauge1").jqxLinearGauge('value', lastPrice);
 
             var cpn = Number(changePercent);
             // If % up or down is greater than PRICE_ALERT_PERCENT_LIMIT
@@ -98,12 +107,6 @@ function displayStockData() {
                 sendAlertMessage(symbol1, "Price alert for " + symbol1, "Price alert for " + symbol1 + " percent change is " + changePercent + "%");
             }
 
-            // Calculate profit
-            var buyin = $("#buyin").val();
-            var shares = $("#shares").val();
-            var profit = (lastPrice * shares) - (buyin * shares);
-            $("#profit").text("$" + profit);
-
             // Symbol 2
             indexer = 1;
             ticker = items[indexer].t;
@@ -114,6 +117,7 @@ function displayStockData() {
             $("#time2").text(new Date().toLocaleTimeString());
             $("#percentChange2").text(changePercent + "%");
             $("#gauge2").jqxGauge('value', changePercent);
+            $("#lgauge2").jqxLinearGauge('value', lastPrice);
 
             cpn = Number(changePercent);
             if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
@@ -128,12 +132,6 @@ function displayStockData() {
             if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
                 sendAlertMessage(symbol2, "Price alert for " + symbol2, "Price alert for " + symbol2 + " percent change is " + changePercent + "%");
             }
-
-            // Calculate profit
-            buyin = $("#buyin2").val();
-            shares = $("#shares2").val();
-            profit = (lastPrice * shares) - (buyin * shares);
-            $("#profit2").text("$" + profit);
 
             document.title = "Updated data " + new Date().toLocaleTimeString();
         },
@@ -231,6 +229,56 @@ function setupGauge($gauge) {
 }
 
 /**
+ * Setup linear gauge in UI
+ *
+ * @param $lgauge the gauge div
+ */
+function setupLinearGauge($lgauge, min, max, baseValue) {
+
+    $lgauge = $lgauge || $('#lgauge');
+
+    $lgauge.jqxLinearGauge({
+        orientation:'horizontal',
+        value: baseValue,
+        width: 300,
+        height: 80,
+        max: max,
+        min: min,
+        pointer: {
+            size: '5%'
+        },
+        colorScheme: 'scheme02',
+        ticksMajor: {
+            size: '10%',
+            interval: 10
+        },
+        ticksMinor: {
+            size: '5%',
+            interval: 2.5,
+            style: {
+                'stroke-width': 1,
+                stroke: '#aaaaaa'
+            }
+        },
+        ranges: [{
+            startValue: min,
+            endValue: baseValue,
+            style: {
+                fill: '#FFA200',
+                stroke: '#FFA200'
+            }
+        }, {
+            startValue: baseValue,
+            endValue: max,
+            style: {
+                fill: '#FF4800',
+                stroke: '#FF4800'
+            }
+        }]
+    });
+}
+
+/**
  * Send an alert message, but don't send them too often
  *
  * @param symbol the stock symbol
@@ -262,7 +310,6 @@ function sendAlertMessage(symbol, subject, message) {
 function sendMessage(subject, message) {
 
     var url = "http://ec2-52-24-129-230.us-west-2.compute.amazonaws.com/datacollector/sendMessage?subject=" + subject + "&message=" + message;
-    // var url = "http://localhost:8080/datacollector/getData?feedName=test";
 
     $.ajax({
         type: "GET",
@@ -281,7 +328,6 @@ function sendMessage(subject, message) {
 function setDelayTime() {
     setTimeout("displayStockData();", $refreshIntervalMS);
 }
-
 
 /**
  * Check the notification status and expire
