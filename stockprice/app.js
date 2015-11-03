@@ -85,6 +85,7 @@ function displayStockData() {
             var ticker = items[indexer].t;
             var lastPrice = items[indexer].l;
             var changePercent = items[indexer].cp;
+            var open = items[indexer].pcls_fix;
             console.log("Last price for " + ticker + " is " + lastPrice);
             $("#quote").text(ticker + " " + lastPrice);
             $("#time").text(new Date().toLocaleTimeString());
@@ -112,6 +113,7 @@ function displayStockData() {
             ticker = items[indexer].t;
             lastPrice = items[indexer].l;
             changePercent = items[indexer].cp;
+            open = items[indexer].pcls_fix;
             console.log("Last price for " + ticker + " is " + lastPrice);
             $("#quote2").text(ticker + " " + lastPrice);
             $("#time2").text(new Date().toLocaleTimeString());
@@ -264,15 +266,15 @@ function setupLinearGauge($lgauge, min, max, baseValue) {
             startValue: min,
             endValue: baseValue,
             style: {
-                fill: '#FFA200',
-                stroke: '#FFA200'
+                fill: 'orangered',
+                stroke: 'orangered'
             }
         }, {
             startValue: baseValue,
             endValue: max,
             style: {
-                fill: '#FF4800',
-                stroke: '#FF4800'
+                fill: 'limegreen',
+                stroke: 'limegreen'
             }
         }]
     });
@@ -309,12 +311,19 @@ function sendAlertMessage(symbol, subject, message) {
  */
 function sendMessage(subject, message) {
 
-    var url = "http://ec2-52-24-129-230.us-west-2.compute.amazonaws.com/datacollector/sendMessage?subject=" + subject + "&message=" + message;
+    // URL to the mapped GET method on the Spring MVC controller servlet
+    var url = "http://ec2-52-24-129-230.us-west-2.compute.amazonaws.com/datacollector/sendMessage";
+
+    // Construct a JS Object that has properties named the same as the parameters the mapped GET method on the server
+    // is looking for. These get encoded properly by ajax by setting the data property below.
+    var data = {};
+    data.subject = subject;
+    data.message = message;
 
     $.ajax({
         type: "GET",
         url: url,
-        dataType: "json",   // Straight up JSON so we get an object as the data object in the success function
+        data: data,
         success: function (data) {
             // Do something here
         },
