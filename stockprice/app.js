@@ -5,7 +5,7 @@ var oneMinuteMS = 60 * oneSecondMS;
 var oneHourMS = 60 * oneMinuteMS;
 var $refreshIntervalMS = 1 * oneMinuteMS;
 var PRICE_ALERT_PERCENT_LIMIT = 10;
-var PRICE_ALERT_PERCENT_MESSAGING_LIMIT = 5;
+var PRICE_ALERT_PERCENT_MESSAGING_LIMIT = 13;
 
 // Store state of notifications so we control when they go out
 var notificationCache = {};
@@ -15,6 +15,8 @@ var NOTIFICATION_INTERVAL_MS = NOTIFICATION_INTERVAL_MINS * 60 * 1000;
 
 var symbol1 = "nugt";
 var symbol2 = "uwti";
+var symbol3 = "gbtc";
+var symbol4 = "vix";
 
 $(function() {
     var box = $("#box");
@@ -23,31 +25,26 @@ $(function() {
     // Pre-seed notification cache
     notificationCache[symbol1] = false;
     notificationCache[symbol2] = false;
+    notificationCache[symbol3] = false;
+    notificationCache[symbol4] = false;
 
     // Make initial call
     displayStockData();
 
-    $("#profit").click(function() {
-        displayStockData();
-    });
-
-    $("#profit2").click(function() {
-        displayStockData();
-    });
-
     $("#gauge1").click(function() {
-        displayStockData();
-    });
-
-    $("#gauge2").click(function() {
         displayStockData();
     });
 
     // Configure gauges
     setupGauge($("#gauge1"));
     setupGauge($("#gauge2"));
+    setupGauge($("#gauge3"));
+    setupGauge($("#gauge4"));
+
     setupLinearGauge($("#lgauge1"), 20, 60, 35);
     setupLinearGauge($("#lgauge2"), 0, 40, 13.5 );
+    setupLinearGauge($("#lgauge3"), 15, 75, 42);
+    setupLinearGauge($("#lgauge4"), 5, 40, 16 );
 });
 
 /**
@@ -64,9 +61,11 @@ function displayStockData() {
     // Expire notification cache if needed
     updateNotificationExpirationStatus(symbol1);
     updateNotificationExpirationStatus(symbol2);
+    updateNotificationExpirationStatus(symbol3);
+    updateNotificationExpirationStatus(symbol4);
 
     // Get stock prices for symbols separated by commas
-    var url = "http://www.google.com/finance/info?q=NSE:" + symbol1 + "," + symbol2;
+    var url = "http://www.google.com/finance/info?q=NSE:" + symbol1 + "," + symbol2 + "," + symbol3 + "," + symbol4;
 
     $.ajax({
         type: "GET",
@@ -133,6 +132,60 @@ function displayStockData() {
             // Send alert message?
             if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
                 sendAlertMessage(symbol2, "Price alert for " + symbol2, "Price alert for " + symbol2 + " percent change is " + changePercent + "%");
+            }
+
+            // Symbol 3
+            indexer = 2;
+            ticker = items[indexer].t;
+            lastPrice = items[indexer].l;
+            changePercent = items[indexer].cp;
+            open = items[indexer].pcls_fix;
+            console.log("Last price for " + ticker + " is " + lastPrice);
+            $("#quote3").text(ticker + " " + lastPrice);
+            $("#time3").text(new Date().toLocaleTimeString());
+            $("#percentChange3").text(changePercent + "%");
+            $("#gauge3").jqxGauge('value', changePercent);
+            $("#lgauge3").jqxLinearGauge('value', lastPrice);
+
+            cpn = Number(changePercent);
+            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
+                $("#status3").text("PAY ATTENTION");
+                $("#status3").css("color", "red");
+            } else {
+                $("#status3").text("normal");
+                $("#status3").css("color", "green");
+            }
+
+            // Send alert message?
+            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
+                sendAlertMessage(symbol3, "Price alert for " + symbol3, "Price alert for " + symbol3 + " percent change is " + changePercent + "%");
+            }
+
+            // Symbol 4
+            indexer = 3;
+            ticker = items[indexer].t;
+            lastPrice = items[indexer].l;
+            changePercent = items[indexer].cp;
+            open = items[indexer].pcls_fix;
+            console.log("Last price for " + ticker + " is " + lastPrice);
+            $("#quote4").text(ticker + " " + lastPrice);
+            $("#time4").text(new Date().toLocaleTimeString());
+            $("#percentChange4").text(changePercent + "%");
+            $("#gauge4").jqxGauge('value', changePercent);
+            $("#lgauge4").jqxLinearGauge('value', lastPrice);
+
+            cpn = Number(changePercent);
+            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
+                $("#status4").text("PAY ATTENTION");
+                $("#status4").css("color", "red");
+            } else {
+                $("#status4").text("normal");
+                $("#status4").css("color", "green");
+            }
+
+            // Send alert message?
+            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
+                sendAlertMessage(symbol4, "Price alert for " + symbol4, "Price alert for " + symbol4 + " percent change is " + changePercent + "%");
             }
 
             document.title = "Updated data " + new Date().toLocaleTimeString();
