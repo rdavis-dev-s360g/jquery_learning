@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    index page body
+</body>
+</html>
+<script src="../node_modules/socket.io-client/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost');
+    socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+    });
+</script>

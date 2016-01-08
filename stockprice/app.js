@@ -3,9 +3,9 @@
 var oneSecondMS = 1000;
 var oneMinuteMS = 60 * oneSecondMS;
 var oneHourMS = 60 * oneMinuteMS;
-var $refreshIntervalMS = 1 * oneMinuteMS;
+var $refreshIntervalMS = 5 * oneMinuteMS;
 var PRICE_ALERT_PERCENT_LIMIT = 10;
-var PRICE_ALERT_PERCENT_MESSAGING_LIMIT = 13;
+var PRICE_ALERT_PERCENT_MESSAGING_LIMIT = 15;
 
 // Store state of notifications so we control when they go out
 var notificationCache = {};
@@ -13,11 +13,13 @@ var notificationCacheExpiration = {};
 var NOTIFICATION_INTERVAL_MINS = 15;
 var NOTIFICATION_INTERVAL_MS = NOTIFICATION_INTERVAL_MINS * 60 * 1000;
 
+// Symbols to get prices of
 var symbol1 = "nugt";
 var symbol2 = "uwti";
 var symbol3 = "gbtc";
 var symbol4 = "vix";
 
+// load up the app
 $(function() {
     var box = $("#box");
     var para = $("p");
@@ -73,7 +75,7 @@ function displayStockData() {
         dataType: "jsonp",
         success: function (data) {
 
-            // Iterate over the one item for example of how to iterate the json results
+            // Iterate over the json results and build an Array of data objects
             var items = [];
             $.each( data, function( key, val ) {
                 items.push(val);
@@ -81,112 +83,15 @@ function displayStockData() {
 
             // Symbol 1
             var indexer = 0;
-            var ticker = items[indexer].t;
-            var lastPrice = items[indexer].l;
-            var changePercent = items[indexer].cp;
-            var open = items[indexer].pcls_fix;
-            console.log("Last price for " + ticker + " is " + lastPrice);
-            $("#quote").text(ticker + " " + lastPrice);
-            $("#time").text(new Date().toLocaleTimeString());
-            $("#percentChange").text(changePercent + "%");
-            $("#gauge1").jqxGauge('value', changePercent);
-            $("#lgauge1").jqxLinearGauge('value', lastPrice);
 
-            var cpn = Number(changePercent);
-            // If % up or down is greater than PRICE_ALERT_PERCENT_LIMIT
-            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
-                $("#status").text("PAY ATTENTION");
-                $("#status").css("color", "red");
-            } else {
-                $("#status").text("normal");
-                $("#status").css("color", "green");
-            }
-
-            // Send alert message?
-            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
-                sendAlertMessage(symbol1, "Price alert for " + symbol1, "Price alert for " + symbol1 + " percent change is " + changePercent + "%");
-            }
-
-            // Symbol 2
-            indexer = 1;
-            ticker = items[indexer].t;
-            lastPrice = items[indexer].l;
-            changePercent = items[indexer].cp;
-            open = items[indexer].pcls_fix;
-            console.log("Last price for " + ticker + " is " + lastPrice);
-            $("#quote2").text(ticker + " " + lastPrice);
-            $("#time2").text(new Date().toLocaleTimeString());
-            $("#percentChange2").text(changePercent + "%");
-            $("#gauge2").jqxGauge('value', changePercent);
-            $("#lgauge2").jqxLinearGauge('value', lastPrice);
-
-            cpn = Number(changePercent);
-            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
-                $("#status2").text("PAY ATTENTION");
-                $("#status2").css("color", "red");
-            } else {
-                $("#status2").text("normal");
-                $("#status2").css("color", "green");
-            }
-
-            // Send alert message?
-            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
-                sendAlertMessage(symbol2, "Price alert for " + symbol2, "Price alert for " + symbol2 + " percent change is " + changePercent + "%");
-            }
-
-            // Symbol 3
-            indexer = 2;
-            ticker = items[indexer].t;
-            lastPrice = items[indexer].l;
-            changePercent = items[indexer].cp;
-            open = items[indexer].pcls_fix;
-            console.log("Last price for " + ticker + " is " + lastPrice);
-            $("#quote3").text(ticker + " " + lastPrice);
-            $("#time3").text(new Date().toLocaleTimeString());
-            $("#percentChange3").text(changePercent + "%");
-            $("#gauge3").jqxGauge('value', changePercent);
-            $("#lgauge3").jqxLinearGauge('value', lastPrice);
-
-            cpn = Number(changePercent);
-            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
-                $("#status3").text("PAY ATTENTION");
-                $("#status3").css("color", "red");
-            } else {
-                $("#status3").text("normal");
-                $("#status3").css("color", "green");
-            }
-
-            // Send alert message?
-            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
-                sendAlertMessage(symbol3, "Price alert for " + symbol3, "Price alert for " + symbol3 + " percent change is " + changePercent + "%");
-            }
-
-            // Symbol 4
-            indexer = 3;
-            ticker = items[indexer].t;
-            lastPrice = items[indexer].l;
-            changePercent = items[indexer].cp;
-            open = items[indexer].pcls_fix;
-            console.log("Last price for " + ticker + " is " + lastPrice);
-            $("#quote4").text(ticker + " " + lastPrice);
-            $("#time4").text(new Date().toLocaleTimeString());
-            $("#percentChange4").text(changePercent + "%");
-            $("#gauge4").jqxGauge('value', changePercent);
-            $("#lgauge4").jqxLinearGauge('value', lastPrice);
-
-            cpn = Number(changePercent);
-            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
-                $("#status4").text("PAY ATTENTION");
-                $("#status4").css("color", "red");
-            } else {
-                $("#status4").text("normal");
-                $("#status4").css("color", "green");
-            }
-
-            // Send alert message?
-            if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
-                sendAlertMessage(symbol4, "Price alert for " + symbol4, "Price alert for " + symbol4 + " percent change is " + changePercent + "%");
-            }
+            // Build pods
+            buildPod(indexer, items[indexer]);
+            indexer++;
+            buildPod(indexer, items[indexer]);
+            indexer++;
+            buildPod(indexer, items[indexer]);
+            indexer++;
+            buildPod(indexer, items[indexer]);
 
             document.title = "Updated data " + new Date().toLocaleTimeString();
         },
@@ -196,8 +101,42 @@ function displayStockData() {
         }
     });
 
-
     setDelayTime();
+}
+
+/**
+ * Build html quote and gauge (pod) addressed by passed indexer
+ *
+ * @param indexer index of pod
+ * @param item stock data item
+ */
+function buildPod(indexer, item) {
+
+    var ticker = item.t;
+    var lastPrice = item.l;
+    var changePercent = item.cp;
+    var open = item.pcls_fix;
+    console.log("Last price for " + ticker + " is " + lastPrice);
+    $("#quote" + (indexer + 1)).text(ticker + " " + lastPrice);
+    $("#time" + (indexer + 1)).text(new Date().toLocaleTimeString());
+    $("#percentChange" + (indexer + 1)).text(changePercent + "%");
+    $("#gauge" + (indexer + 1)).jqxGauge('value', changePercent);
+    $("#lgauge" + (indexer + 1)).jqxLinearGauge('value', lastPrice);
+
+    var cpn = Number(changePercent);
+    // If % up or down is greater than PRICE_ALERT_PERCENT_LIMIT
+    if (Math.abs(cpn) > PRICE_ALERT_PERCENT_LIMIT) {
+        $("#status" + (indexer + 1)).text("PAY ATTENTION");
+        $("#status" + (indexer + 1)).css("color", "red");
+    } else {
+        $("#status" + (indexer + 1)).text("normal");
+        $("#status" + (indexer + 1)).css("color", "green");
+    }
+
+    // Send alert message?
+    if (Math.abs(cpn) > PRICE_ALERT_PERCENT_MESSAGING_LIMIT) {
+        sendAlertMessage(ticker, "Price alert for " + ticker, "Price alert for " + ticker + " percent change is " + changePercent + "%");
+    }
 }
 
 /**
@@ -343,7 +282,7 @@ function setupLinearGauge($lgauge, min, max, baseValue) {
 function sendAlertMessage(symbol, subject, message) {
 
     // Check the cache. If the value is true, that means we've sent a notification already
-    if (notificationCache[symbol] == true) {
+    if (symbol == "VIX" || notificationCache[symbol] == true) {
         return false;
     }
 
