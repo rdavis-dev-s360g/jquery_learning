@@ -85,13 +85,13 @@ function displayStockData() {
             var indexer = 0;
 
             // Build pods
-            buildPod(indexer, items[indexer]);
+            updatePod(indexer, items[indexer]);
             indexer++;
-            buildPod(indexer, items[indexer]);
+            updatePod(indexer, items[indexer]);
             indexer++;
-            buildPod(indexer, items[indexer]);
+            updatePod(indexer, items[indexer]);
             indexer++;
-            buildPod(indexer, items[indexer]);
+            updatePod(indexer, items[indexer]);
 
             document.title = "Updated data " + new Date().toLocaleTimeString();
         },
@@ -110,7 +110,7 @@ function displayStockData() {
  * @param indexer index of pod
  * @param item stock data item
  */
-function buildPod(indexer, item) {
+function updatePod(indexer, item) {
 
     var ticker = item.t;
     var lastPrice = item.l;
@@ -217,7 +217,7 @@ function setupGauge($gauge) {
         height: '200px',
         min: -30,
         max: 30,
-        animationDuration: 1500
+        animationDuration: 2500
     });
     $gauge.jqxGauge('value', 0);
 }
@@ -234,7 +234,7 @@ function setupLinearGauge($lgauge, min, max, baseValue) {
     $lgauge.jqxLinearGauge({
         orientation:'horizontal',
         value: baseValue,
-        width: 300,
+        width: 250,
         height: 80,
         max: max,
         min: min,
@@ -378,7 +378,7 @@ function afterHours() {
     var currentDay = new Date().getUTCDay();
 
     // Using UTC hour comparison here
-    if (currentDay > 5 || (currentHour < 14 && currentMinute < 30) || currentHour >= 20) {
+    if (currentDay > 5 || (currentHour < 14 && currentMinute < 30) || currentHour >= 21) {
         console.log("It IS AFTER HOURS --- time is " + new Date());
         return true;
     }
