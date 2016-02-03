@@ -4,12 +4,13 @@ body {
 
 #quote1, #quote2, #quote3, #quote4 {
     font-family: Arial;
-    width: 200px;
+    font-weight: bold;
+    width: 175px;
     height: 50px;
     text-align: center;
     vertical-align: middle;
     background: #525252;
-    font-size: 34px;
+    font-size: 30px;
     color: #0dcc12;
 }
 
@@ -23,9 +24,10 @@ body {
 #percentChange1, #percentChange2, #percentChange3, #percentChange4 {
     font-family: Arial;
     background: #e3e3e3;
-    font-size: 12px;
+    font-size: 24px;
     color: #000000;
     font-weight: bold;
+    width: 100px;
 }
 
 #dataTable1, #dataTable2, #dataTable3, #dataTable4 {
