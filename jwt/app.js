@@ -24,7 +24,7 @@ function createJWT() {
     oPayload.jti = "id123456";
     oPayload.aud = "http://foo.com/employee";
 
-    // Sign JWT, password=616161
+    // Sign JWT, password=secret2
     var sHeader = JSON.stringify(oHeader);
     var sPayload = JSON.stringify(oPayload);
     var sJWT = KJUR.jws.JWS.sign("HS256", sHeader, sPayload, "secret2");
