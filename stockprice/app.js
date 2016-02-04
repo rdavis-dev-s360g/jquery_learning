@@ -13,26 +13,24 @@ var notificationCacheExpiration = {};
 var NOTIFICATION_INTERVAL_MINS = 15;
 var NOTIFICATION_INTERVAL_MS = NOTIFICATION_INTERVAL_MINS * 60 * 1000;
 
-// Symbols to get prices of
-var symbol1 = "nugt";
-var symbol2 = "uwti";
-var symbol3 = "dust";
-var symbol4 = "dwti";
-var symbol5 = "gbtc";
-var symbol6 = "vix";
+var symbolArray = [];
+symbolArray[0] = "nugt";
+symbolArray[1] = "uwti";
+symbolArray[2] = "dust";
+symbolArray[3] = "dwti";
+symbolArray[4] = "gbtc";
+symbolArray[5] = "vix";
+
+// Convenience var
+var symbolCount = symbolArray.length;
 
 // load up the app
 $(function() {
-    var box = $("#box");
-    var para = $("p");
 
     // Pre-seed notification cache
-    notificationCache[symbol1] = false;
-    notificationCache[symbol2] = false;
-    notificationCache[symbol3] = false;
-    notificationCache[symbol4] = false;
-    notificationCache[symbol5] = false;
-    notificationCache[symbol6] = false;
+    for (var i = 0; i < symbolCount; i++) {
+        notificationCache[symbolArray[i]] = false;
+    }
 
     // Make initial call
     displayStockData();
@@ -42,19 +40,17 @@ $(function() {
     });
 
     // Configure gauges
-    setupGauge($("#gauge1"));
-    setupGauge($("#gauge2"));
-    setupGauge($("#gauge3"));
-    setupGauge($("#gauge4"));
-    setupGauge($("#gauge5"));
-    setupGauge($("#gauge6"));
+    for (var j = 0; j < symbolCount; j++) {
+        setupGauge($("#gauge" + (j+1)));    // gauges are named 1's based
+    }
 
+    // @todo - still need to refactor this
     setupLinearGauge($("#lgauge1"), 20, 60, 35);
-    setupLinearGauge($("#lgauge2"), 0, 40, 13.5 );
+    setupLinearGauge($("#lgauge2"), 0, 40, 13.5);
     setupLinearGauge($("#lgauge3"), 0, 20, 8.5);
-    setupLinearGauge($("#lgauge4"), 150, 300, 234 );
+    setupLinearGauge($("#lgauge4"), 150, 300, 234);
     setupLinearGauge($("#lgauge5"), 15, 75, 42);
-    setupLinearGauge($("#lgauge6"), 5, 40, 16 );
+    setupLinearGauge($("#lgauge6"), 5, 40, 16);
 });
 
 /**
@@ -69,15 +65,15 @@ function displayStockData() {
     }
 
     // Expire notification cache if needed
-    updateNotificationExpirationStatus(symbol1);
-    updateNotificationExpirationStatus(symbol2);
-    updateNotificationExpirationStatus(symbol3);
-    updateNotificationExpirationStatus(symbol4);
-    updateNotificationExpirationStatus(symbol5);
-    updateNotificationExpirationStatus(symbol6);
+    for (var i = 0; i < symbolCount; i++) {
+        updateNotificationExpirationStatus(symbolArray[i]);
+    }
 
-    // Get stock prices for symbols separated by commas
-    var url = "http://www.google.com/finance/info?q=NSE:" + symbol1 + "," + symbol2 + "," + symbol3 + "," + symbol4 + "," + symbol5 + "," + symbol6;
+    // Build up URL to get stock prices
+    var url = "http://www.google.com/finance/info?q=NSE:";
+    for (var i = 0; i < symbolCount; i++) {
+        url += symbolArray[i] + ",";
+    }
 
     $.ajax({
         type: "GET",
@@ -91,21 +87,10 @@ function displayStockData() {
                 items.push(val);
             });
 
-            // Symbol 1
-            var indexer = 0;
-
             // Build pods
-            updatePod(indexer, items[indexer]);
-            indexer++;
-            updatePod(indexer, items[indexer]);
-            indexer++;
-            updatePod(indexer, items[indexer]);
-            indexer++;
-            updatePod(indexer, items[indexer]);
-            indexer++;
-            updatePod(indexer, items[indexer]);
-            indexer++;
-            updatePod(indexer, items[indexer]);
+            for (var j = 0; j < symbolCount; j++) {
+                updatePod(j, items[j]);
+            }
 
             document.title = "Updated data " + new Date().toLocaleTimeString();
         },
