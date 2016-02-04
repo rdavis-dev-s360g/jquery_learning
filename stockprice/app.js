@@ -71,8 +71,8 @@ function displayStockData() {
 
     // Build up URL to get stock prices
     var url = "http://www.google.com/finance/info?q=NSE:";
-    for (var i = 0; i < symbolCount; i++) {
-        url += symbolArray[i] + ",";
+    for (var j = 0; j < symbolCount; j++) {
+        url += symbolArray[j] + ",";
     }
 
     $.ajax({
@@ -88,8 +88,8 @@ function displayStockData() {
             });
 
             // Build pods
-            for (var j = 0; j < symbolCount; j++) {
-                updatePod(j, items[j]);
+            for (var k = 0; k < symbolCount; k++) {
+                updatePod(k, items[k]);
             }
 
             document.title = "Updated data " + new Date().toLocaleTimeString();
