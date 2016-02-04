@@ -3,7 +3,7 @@
 var oneSecondMS = 1000;
 var oneMinuteMS = 60 * oneSecondMS;
 var oneHourMS = 60 * oneMinuteMS;
-var $refreshIntervalMS = 5 * oneMinuteMS;
+var $refreshIntervalMS = 1 * oneMinuteMS;
 var PRICE_ALERT_PERCENT_LIMIT = 10;
 var PRICE_ALERT_PERCENT_MESSAGING_LIMIT = 15;
 
@@ -16,8 +16,10 @@ var NOTIFICATION_INTERVAL_MS = NOTIFICATION_INTERVAL_MINS * 60 * 1000;
 // Symbols to get prices of
 var symbol1 = "nugt";
 var symbol2 = "uwti";
-var symbol3 = "gbtc";
-var symbol4 = "vix";
+var symbol3 = "dust";
+var symbol4 = "dwti";
+var symbol5 = "gbtc";
+var symbol6 = "vix";
 
 // load up the app
 $(function() {
@@ -29,6 +31,8 @@ $(function() {
     notificationCache[symbol2] = false;
     notificationCache[symbol3] = false;
     notificationCache[symbol4] = false;
+    notificationCache[symbol5] = false;
+    notificationCache[symbol6] = false;
 
     // Make initial call
     displayStockData();
@@ -42,11 +46,15 @@ $(function() {
     setupGauge($("#gauge2"));
     setupGauge($("#gauge3"));
     setupGauge($("#gauge4"));
+    setupGauge($("#gauge5"));
+    setupGauge($("#gauge6"));
 
     setupLinearGauge($("#lgauge1"), 20, 60, 35);
     setupLinearGauge($("#lgauge2"), 0, 40, 13.5 );
-    setupLinearGauge($("#lgauge3"), 15, 75, 42);
-    setupLinearGauge($("#lgauge4"), 5, 40, 16 );
+    setupLinearGauge($("#lgauge3"), 0, 20, 8.5);
+    setupLinearGauge($("#lgauge4"), 150, 300, 234 );
+    setupLinearGauge($("#lgauge5"), 15, 75, 42);
+    setupLinearGauge($("#lgauge6"), 5, 40, 16 );
 });
 
 /**
@@ -65,9 +73,11 @@ function displayStockData() {
     updateNotificationExpirationStatus(symbol2);
     updateNotificationExpirationStatus(symbol3);
     updateNotificationExpirationStatus(symbol4);
+    updateNotificationExpirationStatus(symbol5);
+    updateNotificationExpirationStatus(symbol6);
 
     // Get stock prices for symbols separated by commas
-    var url = "http://www.google.com/finance/info?q=NSE:" + symbol1 + "," + symbol2 + "," + symbol3 + "," + symbol4;
+    var url = "http://www.google.com/finance/info?q=NSE:" + symbol1 + "," + symbol2 + "," + symbol3 + "," + symbol4 + "," + symbol5 + "," + symbol6;
 
     $.ajax({
         type: "GET",
@@ -85,6 +95,10 @@ function displayStockData() {
             var indexer = 0;
 
             // Build pods
+            updatePod(indexer, items[indexer]);
+            indexer++;
+            updatePod(indexer, items[indexer]);
+            indexer++;
             updatePod(indexer, items[indexer]);
             indexer++;
             updatePod(indexer, items[indexer]);

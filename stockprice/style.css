@@ -2,7 +2,7 @@ body {
     background-color: darkgray;
 }
 
-#quote1, #quote2, #quote3, #quote4 {
+.quote {
     font-family: Arial;
     font-weight: bold;
     width: 175px;
@@ -14,32 +14,28 @@ body {
     color: #0dcc12;
 }
 
-#time1, #time2, #time3, #time4 {
-    font-family: Arial;
-    background: #e3e3e3;
-    font-size: 12px;
-    color: #000000;
-}
-
-#percentChange1, #percentChange2, #percentChange3, #percentChange4 {
+.percentChange {
     font-family: Arial;
     background: #e3e3e3;
     font-size: 24px;
     color: #000000;
     font-weight: bold;
     width: 100px;
+    align: center;
 }
 
-#dataTable1, #dataTable2, #dataTable3, #dataTable4 {
+.dataTable {
     background: rgba(130, 130, 130, 0.66);
+    align: center;
 }
 
-#status1, #status2, #status3, #status4 {
+.status {
     font-family: Arial;
     background: #e3e3e3;
     font-size: 22px;
     color: #000000;
     font-weight: bold;
+    alight: center;
 }
 
 TD.leftLabel {
