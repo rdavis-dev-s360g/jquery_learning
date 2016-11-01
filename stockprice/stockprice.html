@@ -2,8 +2,10 @@
 <html>
 <head>
     <title>Stock Price</title>
+    <script src="//assets.adobedtm.com/cee8a9ed9921a136ef133900da4dfef44999376a/satelliteLib-3e56ae1cccbd459d45360e43fafca1e4f9e696fa-staging.js"></script>
     <script src="jquery.js"></script>
     <script src="app.js"></script>
+    <script src="dtm.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="stylesheet" href="jqx.base.css" type="text/css" />
     <script type="text/javascript" src="jqxcore.js"></script>
@@ -11,6 +13,30 @@
     <script type="text/javascript" src="jqxdraw.js"></script>
     <script type="text/javascript" src="jqxgauge.js"></script>
     <script type="text/javascript" src="jqxbuttons.js"></script>
+
+    <script type="text/javascript">
+        var digitalData = {
+            selfService:{
+                activityName:"activity is stock price page",
+            },
+            page: {
+                pageInfo:{
+                    pageName:"s360g:public:main:stocks:stock price",
+                    pageCategory:"stocks",
+                    server: "development",
+                    customError: "<error code>:<error action>", // needs to populate dynamically
+                },
+                category :{
+                    primaryCategory:"public",
+                    subCategory1:"public:bus",
+                    subCategory2:"public:bus:stocks",
+                }
+            },
+            form: {
+                formName:"view stock prices", //needs to be set dynamically
+            }
+        }
+    </script>
 </head>
 <body>
 <div id="bodyDiv" style="margin: auto">
@@ -72,5 +98,6 @@
 
     </table>
 </div>
+<script type="text/javascript">_satellite.pageBottom();</script>
 </body>
 </html>

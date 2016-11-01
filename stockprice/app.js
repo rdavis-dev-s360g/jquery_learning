@@ -27,6 +27,9 @@ var symbolCount = symbolArray.length;
 // load up the app
 $(function() {
 
+    // Trigger analytics login success event
+    actionSuccess();
+
     // Pre-seed notification cache
     for (var i = 0; i < symbolCount; i++) {
         notificationCache[symbolArray[i]] = false;
